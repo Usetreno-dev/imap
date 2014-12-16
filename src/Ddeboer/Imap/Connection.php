@@ -63,7 +63,7 @@ class Connection
             throw new MailboxDoesNotExistException($name);
         }
 
-        return new Mailbox($this->server . \imap_utf7_encode($name), $this);
+        return new Mailbox($this->server . \mb_convert_encoding($name, "UTF7-IMAP", "UTF8"), $this);
     }
 
     /**
@@ -134,7 +134,7 @@ class Connection
         if (null === $this->mailboxNames) {
             $mailboxes = \imap_getmailboxes($this->resource, $this->server, '*');
             foreach ($mailboxes as $mailbox) {
-                $this->mailboxNames[] = \imap_utf7_decode(str_replace($this->server, '', $mailbox->name));
+                $this->mailboxNames[] = \mb_convert_encoding(str_replace($this->server, '', $mailbox->name), "UTF8", "UTF7-IMAP");
             }
         }
 
