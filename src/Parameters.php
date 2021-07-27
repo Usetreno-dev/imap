@@ -34,13 +34,16 @@ class Parameters
     protected function decode($value)
     {
         $decoded = '';
-        $parts = imap_mime_header_decode($value);
+        $parts = \imap_mime_header_decode($value);
+
         foreach ($parts as $part) {
-            $charset = 'default' == $part->charset ? 'auto' : $part->charset;
-            // imap_utf8 doesn't seem to work properly, so use Transcoder instead
-            $decoded .= Transcoder::create()->transcode($part->text, $charset);
+            if ('default' !== $part->charset) {
+                $decoded .= Transcoder::create()->transcode($part->text, $charset);
+            }
+
+            $decoded .= $part->text;
         }
-        
+
         return $decoded;
     }
 }
